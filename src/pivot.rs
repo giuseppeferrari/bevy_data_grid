@@ -1,8 +1,8 @@
 use std::ops::{Mul, Sub};
 
-use glam::{IVec2, Vec2};
+use bevy_math::{IVec2, Vec2};
 
-use crate::GridPoint;
+use crate::{point::Point2d, GridPoint};
 
 /// A pivot point on a 2d rect.
 #[derive(Eq, PartialEq, Clone, Copy, Debug)]
@@ -64,6 +64,16 @@ impl From<Pivot> for Vec2 {
 pub struct PivotedPoint {
     pub point: IVec2,
     pub pivot: Pivot,
+}
+
+impl Point2d for PivotedPoint {
+    fn x_f32(&self) -> f32 {
+        self.point.as_vec2().x_f32()
+    }
+
+    fn y_f32(&self) -> f32 {
+        self.point.as_vec2().y_f32()
+    }
 }
 
 impl GridPoint for PivotedPoint {

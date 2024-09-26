@@ -8,7 +8,7 @@
 //! # Example
 //!
 //! ```
-//! use sark_grids::*;
+//! use bevy_data_grid::*;
 //!
 //! let mut grid = Grid::new([10,10]);
 //!
@@ -26,7 +26,7 @@
 
 use std::ops::{Bound, Index, IndexMut, RangeBounds, Sub};
 
-use glam::{IVec2, UVec2, Vec2};
+use bevy_math::{IVec2, UVec2, Vec2};
 use itertools::Itertools;
 
 use crate::{geometry::GridRect, point::Size2d, GridPoint, Pivot};

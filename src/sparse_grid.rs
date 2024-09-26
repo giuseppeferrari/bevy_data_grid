@@ -8,7 +8,7 @@
 //! # Example
 //!
 //! ```rust
-//! use sark_grids::sparse_grid::SparseGrid;
+//! use bevy_data_grid::sparse_grid::SparseGrid;
 //!
 //! let mut grid = SparseGrid::new([10,10]);
 //!
@@ -31,7 +31,7 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-use glam::IVec2;
+use bevy_math::IVec2;
 
 use crate::{geometry::GridRect, grid::Side, point::*};
 
@@ -200,7 +200,7 @@ impl<T: Clone> SparseGrid<T> {
     /// Converts a 2d grid position to it's corresponding 1D index.
     #[inline(always)]
     pub fn transform_lti(&self, pos: impl GridPoint) -> usize {
-        let [x, y] = pos.as_array();
+        let [x, y] = pos.as_iarray();
         (y * self.width() as i32 + x) as usize
     }
 
@@ -339,9 +339,9 @@ where
 
 #[cfg(test)]
 mod test {
-    use glam::IVec2;
+    use bevy_math::IVec2;
 
-    use crate::point::GridPoint;
+    use crate::point::*;
 
     use super::SparseGrid;
 
@@ -349,7 +349,7 @@ mod test {
     fn index() {
         let mut grid = SparseGrid::new([10, 17]);
 
-        let [x, y] = grid.transform_itl(5).as_array();
+        let [x, y] = grid.transform_itl(5).as_iarray();
 
         grid[[5, 6]] = 10;
 

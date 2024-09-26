@@ -1,6 +1,6 @@
 //! Utility for handling cones/triangles on a 2d grid.
 
-use glam::IVec2;
+use bevy_math::IVec2;
 
 use crate::GridPoint;
 

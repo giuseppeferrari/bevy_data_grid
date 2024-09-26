@@ -1,4 +1,4 @@
-use glam::{IVec2, UVec2, Vec2};
+use bevy_math::{IVec2, UVec2, Vec2};
 use itertools::Itertools;
 
 use crate::{point::Point2d, GridPoint, Pivot};

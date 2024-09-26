@@ -2,7 +2,7 @@
 use std::ops::Sub;
 
 // https://www.redblobgames.com/grids/line-drawing.html
-use glam::IVec2;
+use bevy_math::IVec2;
 
 use crate::GridPoint;
 

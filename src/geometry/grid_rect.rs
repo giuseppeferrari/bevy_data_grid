@@ -4,9 +4,10 @@ use std::{
     ops::{Add, Deref, Sub},
 };
 
-use glam::{IVec2, Mat2, Vec2};
+use bevy_math::{IVec2, Mat2, Vec2};
+use rand::Rng;
 
-use crate::{GridPoint, Pivot};
+use crate::{point::Point2d, GridPoint, Pivot};
 
 use super::GridShape;
 
@@ -207,6 +208,13 @@ impl GridRect {
         let max = amax.min(bmax);
         let min = amin.max(bmin);
         GridRect::from_points(min, max)
+    }
+
+    /// Returns a random point in the given rect
+    pub fn random_point(&self, mut rng: impl Rng) -> IVec2 {
+        let x = rng.gen_range(0..self.size.x);
+        let y = rng.gen_range(0..self.size.y);
+        self.min_i() + IVec2::new(x, y)
     }
 }
 

@@ -1,5 +1,5 @@
 //! Traits for more easily dealing with the various types to represent 2d points/sizes
-use glam::{IVec2, UVec2, Vec2};
+use bevy_math::{IVec2, UVec2, Vec2};
 
 use crate::{
     directions::{DIR_4, DIR_8},
@@ -7,37 +7,95 @@ use crate::{
     Pivot,
 };
 
+/// A trait for types representing an arbitrary 2d point.
+pub trait Point2d {
+    fn x_f32(&self) -> f32;
+    fn y_f32(&self) -> f32;
+
+    fn as_ivec2(&self) -> IVec2 {
+        self.as_vec2().as_ivec2()
+    }
+    fn as_uvec2(&self) -> UVec2 {
+        self.as_vec2().as_uvec2()
+    }
+    fn as_vec2(&self) -> Vec2 {
+        Vec2::new(self.x_f32(), self.y_f32())
+    }
+
+    fn as_array(&self) -> [f32; 2] {
+        self.as_vec2().to_array()
+    }
+
+    fn as_iarray(&self) -> [i32; 2] {
+        self.as_ivec2().to_array()
+    }
+
+    fn as_usize_array(&self) -> [usize; 2] {
+        let [x, y] = self.as_iarray();
+        [x as usize, y as usize]
+    }
+
+    fn as_tuple(&self) -> (f32, f32) {
+        let [x, y] = self.as_vec2().to_array();
+        (x, y)
+    }
+
+    fn as_i32_tuple(&self) -> (i32, i32) {
+        let [x, y] = self.as_ivec2().to_array();
+        (x, y)
+    }
+
+    fn as_usize_tuple(&self) -> (usize, usize) {
+        let (x, y) = self.as_i32_tuple();
+        (x as usize, y as usize)
+    }
+}
+
+macro_rules! impl_point2d {
+    ($type:ty) => {
+        impl Point2d for $type {
+            fn x_f32(&self) -> f32 {
+                self[0] as f32
+            }
+
+            fn y_f32(&self) -> f32 {
+                self[1] as f32
+            }
+        }
+    };
+    (tuple: $type:ty) => {
+        impl Point2d for ($type, $type) {
+            fn x_f32(&self) -> f32 {
+                self.0 as f32
+            }
+
+            fn y_f32(&self) -> f32 {
+                self.1 as f32
+            }
+        }
+    };
+}
+
+impl_point2d!(Vec2);
+impl_point2d!(IVec2);
+impl_point2d!(UVec2);
+impl_point2d!([u32; 2]);
+impl_point2d!([i32; 2]);
+impl_point2d!([f32; 2]);
+impl_point2d!([usize; 2]);
+impl_point2d!( tuple: u32 );
+impl_point2d!( tuple: i32 );
+impl_point2d!( tuple: f32 );
+impl_point2d!( tuple: usize);
+
 /// A trait for types representing an integer point on a 2d grid.
 #[allow(clippy::len_without_is_empty)]
-pub trait GridPoint: Clone + Copy {
+pub trait GridPoint: Clone + Copy + Point2d {
     fn x(&self) -> i32;
     fn y(&self) -> i32;
 
-    fn width(&self) -> i32 {
-        self.x()
-    }
-
-    fn height(&self) -> i32 {
-        self.y()
-    }
-
     fn len(&self) -> usize {
         (self.x() * self.y()) as usize
-    }
-
-    fn as_ivec2(&self) -> IVec2 {
-        IVec2::new(self.x(), self.y())
-    }
-
-    fn as_uvec2(&self) -> UVec2 {
-        self.as_ivec2().as_uvec2()
-    }
-    fn as_vec2(&self) -> Vec2 {
-        self.as_ivec2().as_vec2()
-    }
-
-    fn as_array(&self) -> [i32; 2] {
-        self.as_ivec2().to_array()
     }
 
     /// Get the grid point's corresponding 1d index.
@@ -90,12 +148,36 @@ pub trait GridPoint: Clone + Copy {
     /// Retrieve the [`PivotedPoint`] with applied pivots, if any.
     fn get_pivot(self) -> Option<Pivot>;
 
-    /// The [taxicab distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
+    /// The [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
     /// between two grid points.
     #[inline]
-    fn taxi_dist(self, other: impl GridPoint) -> usize {
+    fn manhattan(self, other: impl GridPoint) -> usize {
         let d = (self.as_ivec2() - other.as_ivec2()).abs();
         (d.x + d.y) as usize
+    }
+
+    /// The [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance)
+    /// between two grid points.
+    #[inline]
+    fn chebyshev(self, other: impl GridPoint) -> usize {
+        let d = (self.as_ivec2() - other.as_ivec2()).abs();
+        d.max_element() as usize
+    }
+
+    /// The [Euclidean distance squared](https://en.wikipedia.org/wiki/Euclidean_distance)
+    /// between two grid points.
+    #[inline]
+    fn euclidean_squared(self, other: impl GridPoint) -> usize {
+        let d = self.as_ivec2() - other.as_ivec2();
+        d.length_squared() as usize
+    }
+
+    /// The [Euclidean distance](https://en.wikipedia.org/wiki/Euclidean_distance)
+    /// between two grid points.
+    #[inline]
+    fn euclidean(self, other: impl GridPoint) -> f32 {
+        let d = (self.as_ivec2() - other.as_ivec2()).as_vec2();
+        d.length_squared().sqrt()
     }
 
     /// Linearly interpolate between points a and b by the amount t.
@@ -162,6 +244,21 @@ macro_rules! impl_grid_point {
             }
         }
     };
+    (tuple: $type:ty) => {
+        impl GridPoint for ($type, $type) {
+            fn x(&self) -> i32 {
+                self.0 as i32
+            }
+
+            fn y(&self) -> i32 {
+                self.1 as i32
+            }
+
+            fn get_pivot(self) -> Option<Pivot> {
+                None
+            }
+        }
+    };
 }
 
 impl_grid_point!(IVec2);
@@ -169,40 +266,19 @@ impl_grid_point!(UVec2);
 impl_grid_point!([u32; 2]);
 impl_grid_point!([i32; 2]);
 impl_grid_point!([usize; 2]);
+impl_grid_point!( tuple: u32);
+impl_grid_point!( tuple: i32);
+impl_grid_point!( tuple: usize);
 
 /// A trait for types representing a 2d size.
 #[allow(clippy::len_without_is_empty)]
-pub trait Size2d: Clone + Copy {
+pub trait Size2d: Clone + Copy + Point2d {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
 
     #[inline]
-    fn as_uvec2(&self) -> UVec2 {
-        UVec2::new(self.width() as u32, self.height() as u32)
-    }
-
-    #[inline]
     fn len(&self) -> usize {
         self.width() * self.height()
-    }
-
-    #[inline]
-    fn as_vec2(&self) -> Vec2 {
-        self.as_uvec2().as_vec2()
-    }
-
-    #[inline]
-    fn as_ivec2(&self) -> IVec2 {
-        self.as_uvec2().as_ivec2()
-    }
-    #[inline]
-    fn as_array(&self) -> [usize; 2] {
-        [self.width(), self.height()]
-    }
-    #[inline]
-    fn as_usize_array(&self) -> [usize; 2] {
-        let p = self.as_uvec2();
-        [p.x as usize, p.y as usize]
     }
 }
 
@@ -218,6 +294,17 @@ macro_rules! impl_size2d {
             }
         }
     };
+    (tuple: $type:ty) => {
+        impl Size2d for ($type, $type) {
+            fn width(&self) -> usize {
+                self.0 as usize
+            }
+
+            fn height(&self) -> usize {
+                self.1 as usize
+            }
+        }
+    };
 }
 
 impl_size2d!(IVec2);
@@ -225,55 +312,13 @@ impl_size2d!(UVec2);
 impl_size2d!([u32; 2]);
 impl_size2d!([i32; 2]);
 impl_size2d!([usize; 2]);
-
-/// A trait for types representing an arbitrary 2d point.
-pub trait Point2d {
-    fn x(&self) -> f32;
-    fn y(&self) -> f32;
-
-    fn as_ivec2(&self) -> IVec2 {
-        self.as_vec2().as_ivec2()
-    }
-    fn as_uvec2(&self) -> UVec2 {
-        self.as_vec2().as_uvec2()
-    }
-    fn as_vec2(&self) -> Vec2 {
-        Vec2::new(self.x(), self.y())
-    }
-    fn as_array(&self) -> [f32; 2] {
-        self.as_vec2().to_array()
-    }
-    fn as_usize_array(&self) -> [usize; 2] {
-        let p = self.as_uvec2();
-        [p.x as usize, p.y as usize]
-    }
-}
-
-macro_rules! impl_point2d {
-    ($type:ty) => {
-        impl Point2d for $type {
-            fn x(&self) -> f32 {
-                self[0] as f32
-            }
-
-            fn y(&self) -> f32 {
-                self[1] as f32
-            }
-        }
-    };
-}
-
-impl_point2d!(Vec2);
-impl_point2d!(IVec2);
-impl_point2d!(UVec2);
-impl_point2d!([u32; 2]);
-impl_point2d!([i32; 2]);
-impl_point2d!([f32; 2]);
-impl_point2d!([usize; 2]);
+impl_size2d!( tuple: u32);
+impl_size2d!( tuple: i32);
+impl_size2d!( tuple: usize);
 
 #[cfg(test)]
 mod tests {
-    use glam::IVec2;
+    use bevy_math::IVec2;
 
     use crate::GridPoint;
 
@@ -282,7 +327,7 @@ mod tests {
         let a = [10, 10];
         let b = [20, 20];
 
-        let dist = GridPoint::taxi_dist(a, b);
+        let dist = GridPoint::manhattan(a, b);
         assert_eq!(dist, 20);
     }
 

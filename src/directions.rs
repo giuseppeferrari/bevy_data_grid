@@ -1,5 +1,5 @@
 //! Utilities for dealing with directions on a 2d grid.
-use glam::IVec2;
+use bevy_math::IVec2;
 
 use crate::point::GridPoint;
 
@@ -22,43 +22,43 @@ pub const DIR_8: &[IVec2] = &[
 
 /// Four orthogonal directions on a 2d grid.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Dir4 {
+pub enum GridCompassQuadrant {
     Up,
     Down,
     Left,
     Right,
 }
 
-impl From<Dir4> for IVec2 {
-    fn from(d: Dir4) -> Self {
+impl From<GridCompassQuadrant> for IVec2 {
+    fn from(d: GridCompassQuadrant) -> Self {
         match d {
-            Dir4::Up => UP,
-            Dir4::Down => DOWN,
-            Dir4::Left => LEFT,
-            Dir4::Right => RIGHT,
+            GridCompassQuadrant::Up => UP,
+            GridCompassQuadrant::Down => DOWN,
+            GridCompassQuadrant::Left => LEFT,
+            GridCompassQuadrant::Right => RIGHT,
         }
     }
 }
 
-impl Dir4 {
+impl GridCompassQuadrant {
     /// Retrieve the direction from the given point, or none if it's (0,0).
-    pub fn from_point(p: impl GridPoint) -> Option<Dir4> {
+    pub fn from_point(p: impl GridPoint) -> Option<GridCompassQuadrant> {
         match p.as_ivec2().signum().to_array() {
-            [0, 1] => Some(Dir4::Up),
-            [0, -1] => Some(Dir4::Down),
-            [-1, 0] => Some(Dir4::Left),
-            [1, 0] => Some(Dir4::Right),
+            [0, 1] => Some(GridCompassQuadrant::Up),
+            [0, -1] => Some(GridCompassQuadrant::Down),
+            [-1, 0] => Some(GridCompassQuadrant::Left),
+            [1, 0] => Some(GridCompassQuadrant::Right),
             _ => None,
         }
     }
 
     /// Retrieve a direction from it's corresponding index.
-    pub fn from_index(i: usize) -> Option<Dir4> {
+    pub fn from_index(i: usize) -> Option<GridCompassQuadrant> {
         match i {
-            0 => Some(Dir4::Up),
-            1 => Some(Dir4::Down),
-            2 => Some(Dir4::Left),
-            3 => Some(Dir4::Right),
+            0 => Some(GridCompassQuadrant::Up),
+            1 => Some(GridCompassQuadrant::Down),
+            2 => Some(GridCompassQuadrant::Left),
+            3 => Some(GridCompassQuadrant::Right),
             _ => None,
         }
     }
@@ -66,17 +66,17 @@ impl Dir4 {
     /// Convert a direction to it's corresponding index.
     pub fn to_index(&self) -> usize {
         match self {
-            Dir4::Up => 0,
-            Dir4::Down => 1,
-            Dir4::Left => 2,
-            Dir4::Right => 3,
+            GridCompassQuadrant::Up => 0,
+            GridCompassQuadrant::Down => 1,
+            GridCompassQuadrant::Left => 2,
+            GridCompassQuadrant::Right => 3,
         }
     }
 }
 
 /// 8 directions on a 2d grid.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Dir8 {
+pub enum GridCompassOctant {
     Up,
     Down,
     Left,
@@ -87,33 +87,33 @@ pub enum Dir8 {
     DownRight,
 }
 
-impl Dir8 {
+impl GridCompassOctant {
     /// Retrieve the direction from the given point, or none if it's (0,0).
-    pub fn from_point(p: impl GridPoint) -> Option<Dir8> {
+    pub fn from_point(p: impl GridPoint) -> Option<GridCompassOctant> {
         match p.as_ivec2().signum().to_array() {
-            [0, 1] => Some(Dir8::Up),
-            [0, -1] => Some(Dir8::Down),
-            [-1, 0] => Some(Dir8::Left),
-            [1, 0] => Some(Dir8::Right),
-            [-1, 1] => Some(Dir8::UpLeft),
-            [1, 1] => Some(Dir8::UpRight),
-            [-1, -1] => Some(Dir8::DownLeft),
-            [1, -1] => Some(Dir8::DownRight),
+            [0, 1] => Some(GridCompassOctant::Up),
+            [0, -1] => Some(GridCompassOctant::Down),
+            [-1, 0] => Some(GridCompassOctant::Left),
+            [1, 0] => Some(GridCompassOctant::Right),
+            [-1, 1] => Some(GridCompassOctant::UpLeft),
+            [1, 1] => Some(GridCompassOctant::UpRight),
+            [-1, -1] => Some(GridCompassOctant::DownLeft),
+            [1, -1] => Some(GridCompassOctant::DownRight),
             _ => None,
         }
     }
 
     /// Retrieve a direction from an index.
-    pub fn from_index(i: usize) -> Option<Dir8> {
+    pub fn from_index(i: usize) -> Option<GridCompassOctant> {
         match i {
-            0 => Some(Dir8::Up),
-            1 => Some(Dir8::Down),
-            2 => Some(Dir8::Left),
-            3 => Some(Dir8::Right),
-            4 => Some(Dir8::UpLeft),
-            5 => Some(Dir8::UpRight),
-            6 => Some(Dir8::DownLeft),
-            7 => Some(Dir8::DownRight),
+            0 => Some(GridCompassOctant::Up),
+            1 => Some(GridCompassOctant::Down),
+            2 => Some(GridCompassOctant::Left),
+            3 => Some(GridCompassOctant::Right),
+            4 => Some(GridCompassOctant::UpLeft),
+            5 => Some(GridCompassOctant::UpRight),
+            6 => Some(GridCompassOctant::DownLeft),
+            7 => Some(GridCompassOctant::DownRight),
             _ => None,
         }
     }
@@ -121,29 +121,29 @@ impl Dir8 {
     /// Convert a direction to it's corresponding index.
     pub fn to_index(&self) -> usize {
         match self {
-            Dir8::Up => 0,
-            Dir8::Down => 1,
-            Dir8::Left => 2,
-            Dir8::Right => 3,
-            Dir8::UpLeft => 4,
-            Dir8::UpRight => 5,
-            Dir8::DownLeft => 6,
-            Dir8::DownRight => 7,
+            GridCompassOctant::Up => 0,
+            GridCompassOctant::Down => 1,
+            GridCompassOctant::Left => 2,
+            GridCompassOctant::Right => 3,
+            GridCompassOctant::UpLeft => 4,
+            GridCompassOctant::UpRight => 5,
+            GridCompassOctant::DownLeft => 6,
+            GridCompassOctant::DownRight => 7,
         }
     }
 }
 
-impl From<Dir8> for IVec2 {
-    fn from(d: Dir8) -> Self {
+impl From<GridCompassOctant> for IVec2 {
+    fn from(d: GridCompassOctant) -> Self {
         match d {
-            Dir8::Up => UP,
-            Dir8::Down => DOWN,
-            Dir8::Left => LEFT,
-            Dir8::Right => RIGHT,
-            Dir8::UpLeft => UP_LEFT,
-            Dir8::UpRight => UP_RIGHT,
-            Dir8::DownLeft => DOWN_LEFT,
-            Dir8::DownRight => DOWN_RIGHT,
+            GridCompassOctant::Up => UP,
+            GridCompassOctant::Down => DOWN,
+            GridCompassOctant::Left => LEFT,
+            GridCompassOctant::Right => RIGHT,
+            GridCompassOctant::UpLeft => UP_LEFT,
+            GridCompassOctant::UpRight => UP_RIGHT,
+            GridCompassOctant::DownLeft => DOWN_LEFT,
+            GridCompassOctant::DownRight => DOWN_RIGHT,
         }
     }
 }

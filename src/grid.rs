@@ -419,8 +419,6 @@ impl<T: Clone, P: GridPoint> Index<P> for Grid<T> {
 }
 
 impl<T: Clone, P: GridPoint> IndexMut<P> for Grid<T>
-where
-    T: Default,
 {
     fn index_mut(&mut self, index: P) -> &mut T {
         let xy = index.as_ivec2();
@@ -437,8 +435,6 @@ impl<T: Clone> Index<usize> for Grid<T> {
     }
 }
 impl<T: Clone> IndexMut<usize> for Grid<T>
-where
-    T: Default,
 {
     fn index_mut(&mut self, index: usize) -> &mut T {
         &mut self.data[index]

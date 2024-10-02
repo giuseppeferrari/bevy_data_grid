@@ -31,7 +31,7 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-use bevy_math::IVec2;
+use glam::IVec2;
 
 use crate::{geometry::GridRect, grid::Side, point::*};
 
@@ -339,7 +339,7 @@ where
 
 #[cfg(test)]
 mod test {
-    use bevy_math::IVec2;
+    use glam::IVec2;
 
     use crate::point::*;
 

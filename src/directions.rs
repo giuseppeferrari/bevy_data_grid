@@ -1,5 +1,5 @@
 //! Utilities for dealing with directions on a 2d grid.
-use bevy_math::IVec2;
+use glam::IVec2;
 
 use crate::point::GridPoint;
 

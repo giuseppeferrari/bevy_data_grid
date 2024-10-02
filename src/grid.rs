@@ -26,7 +26,7 @@
 
 use std::ops::{Bound, Index, IndexMut, RangeBounds, Sub};
 
-use bevy_math::{IVec2, UVec2, Vec2};
+use glam::{IVec2, UVec2, Vec2};
 use itertools::Itertools;
 
 use crate::{geometry::GridRect, point::Size2d, GridPoint, Pivot};
@@ -418,8 +418,7 @@ impl<T: Clone, P: GridPoint> Index<P> for Grid<T> {
     }
 }
 
-impl<T: Clone, P: GridPoint> IndexMut<P> for Grid<T>
-{
+impl<T: Clone, P: GridPoint> IndexMut<P> for Grid<T> {
     fn index_mut(&mut self, index: P) -> &mut T {
         let xy = index.as_ivec2();
         let i = self.transform_lti(xy);
@@ -434,8 +433,7 @@ impl<T: Clone> Index<usize> for Grid<T> {
         &self.data[i]
     }
 }
-impl<T: Clone> IndexMut<usize> for Grid<T>
-{
+impl<T: Clone> IndexMut<usize> for Grid<T> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         &mut self.data[index]
     }

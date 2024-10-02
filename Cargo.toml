@@ -10,6 +10,6 @@ keywords = ["2d", "grid", "sparse_grid"]
 description = "A set of grids for storing and accessing data in a grid-like way. Forked by sark_grid_rs to use bevy math: https://github.com/sarkahn/sark_grids_rs"
 
 [dependencies]
-bevy_math = "0.14.2"
+glam = "0.27"
 itertools = "0.12.1"
 rand = "0.8.5"

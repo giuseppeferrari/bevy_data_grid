@@ -1,5 +1,5 @@
 //! Traits for more easily dealing with the various types to represent 2d points/sizes
-use bevy_math::{IVec2, UVec2, Vec2};
+use glam::{IVec2, UVec2, Vec2};
 
 use crate::{
     directions::{DIR_4, DIR_8},
@@ -22,14 +22,17 @@ pub trait Point2d {
         Vec2::new(self.x_f32(), self.y_f32())
     }
 
-    fn as_array(&self) -> [f32; 2] {
-        self.as_vec2().to_array()
+    fn as_array(&self) -> [i32; 2] {
+        self.as_ivec2().to_array()
     }
 
     fn as_iarray(&self) -> [i32; 2] {
         self.as_ivec2().to_array()
     }
 
+    fn as_f32_array(&self) -> [f32; 2] {
+        self.as_vec2().to_array()
+    }
     fn as_usize_array(&self) -> [usize; 2] {
         let [x, y] = self.as_iarray();
         [x as usize, y as usize]
@@ -318,7 +321,7 @@ impl_size2d!( tuple: usize);
 
 #[cfg(test)]
 mod tests {
-    use bevy_math::IVec2;
+    use glam::IVec2;
 
     use crate::GridPoint;
 

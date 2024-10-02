@@ -1,4 +1,4 @@
-use bevy_math::IVec2;
+use glam::IVec2;
 
 use crate::{
     directions::{DOWN_LEFT, DOWN_RIGHT, UP, UP_LEFT, UP_RIGHT},

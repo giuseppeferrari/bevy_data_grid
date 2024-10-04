@@ -38,6 +38,14 @@ impl Display for GridRect {
 }
 
 impl GridRect {
+    pub const fn new_const(center: IVec2, half_size: IVec2) -> GridRect {
+        GridRect {
+            center,
+            size : glam::IVec2::new( half_size.x * 2, half_size.y -2 ),
+            extents: glam::Vec2::new( half_size.x as f32 , half_size.y as f32 )
+        }
+    }
+
     pub fn new(center: impl GridPoint, size: impl GridPoint) -> GridRect {
         GridRect {
             center: center.as_ivec2(),

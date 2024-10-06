@@ -97,10 +97,6 @@ pub trait GridPoint: Clone + Copy + Point2d {
     fn x(&self) -> i32;
     fn y(&self) -> i32;
 
-    fn len(&self) -> usize {
-        (self.x() * self.y()) as usize
-    }
-
     /// Get the grid point's corresponding 1d index.
     #[inline]
     fn as_index(&self, grid_width: usize) -> usize {

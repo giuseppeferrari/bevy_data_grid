@@ -349,6 +349,7 @@ impl<T> Grid<T> {
     #[inline(always)]
     pub fn transform_lti(&self, xy: impl GridPoint) -> usize {
         let xy = self.pivoted_point(xy);
+        assert_eq!( self.size.len(), self.data.len() );
         let [x, y] = xy.to_array();
         y as usize * self.width() + x as usize
     }
@@ -356,6 +357,7 @@ impl<T> Grid<T> {
     /// Converts a 1d index to it's corresponding grid position.
     #[inline(always)]
     pub fn transform_itl(&self, index: usize) -> IVec2 {
+        assert_eq!( self.size.len(), self.data.len() );
         let index = index as i32;
         let w = self.width() as i32;
         let x = index % w;
@@ -367,6 +369,7 @@ impl<T> Grid<T> {
     /// (center origin).
     #[inline(always)]
     pub fn transform_ltw(&self, xy: impl GridPoint) -> IVec2 {
+        assert_eq!( self.size.len(), self.data.len() );
         xy.as_ivec2() - self.size.as_ivec2() / 2
     }
 
@@ -374,6 +377,7 @@ impl<T> Grid<T> {
     /// (bottom-left origin).
     #[inline(always)]
     pub fn transform_wtl(&self, xy: impl GridPoint) -> IVec2 {
+        assert_eq!( self.size.len(), self.data.len() );
         xy.as_ivec2() + self.size.as_ivec2() / 2
     }
 
@@ -382,6 +386,7 @@ impl<T> Grid<T> {
     /// If no pivot has been applied, the point will be returned directly.
     #[inline]
     pub fn pivoted_point(&self, xy: impl GridPoint) -> IVec2 {
+        assert_eq!( self.size.len(), self.data.len() );
         if let Some(pivot) = xy.get_pivot() {
             pivot.transform_point(xy, self.size)
         } else {

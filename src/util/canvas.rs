@@ -1,6 +1,6 @@
 //! Simple utility for drawing static images to the terminal.
 
-use crate::GridPoint;
+use crate::{GridPoint, Size2d};
 use glam::IVec2;
 
 pub struct Canvas {
@@ -9,7 +9,7 @@ pub struct Canvas {
 }
 
 impl Canvas {
-    pub fn new(size: impl GridPoint) -> Canvas {
+    pub fn new(size: impl Size2d) -> Canvas {
         let string = str::repeat(" ", size.len());
 
         Canvas {
